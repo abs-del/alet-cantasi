@@ -1,0 +1,40 @@
+# Ortam & Gizli Dosyalar
+.env
+.env.*
+*.env
+
+# Runtime Verileri (commit edilmez, lokal kalır)
+data/snapshots/
+data/telemetry.ndjson
+data/schema-drift-report.json
+
+# Audit log commit edilir (immutable history), snapshots edilmez
+# data/audit-log.ndjson → commit et
+# docs/agent-perf-history.json → commit et (performance baseline)
+
+# Bütçe durumu (kişisel, paylaşılmaz)
+config/budget.json
+
+# Node
+node_modules/
+.npm/
+*.log
+npm-debug.log*
+
+# Geçici Dosyalar
+/tmp/
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Build Çıktıları
+dist/
+build/
+.cache/

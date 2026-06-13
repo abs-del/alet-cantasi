@@ -1,0 +1,143 @@
+{
+  "$schema": "https://code.claude.com/schemas/settings.json",
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "DISABLE_AUTOUPDATER": "0",
+    "MAX_THINKING_TOKENS": "16000"
+  },
+  "model": "claude-sonnet-4-6",
+  "permissions": {
+    "allow": [
+      "Read(**/*.md)",
+      "Read(**/*.html)",
+      "Read(**/*.json)",
+      "Read(**/*.js)",
+      "Read(**/*.css)",
+      "Edit(**/*)",
+      "Write(**/*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(python3:*)",
+      "Bash(rg:*)",
+      "Bash(jq:*)",
+      "Bash(wc:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(grep:*)",
+      "Bash(find . *)",
+      "Bash(ls:*)",
+      "Bash(stat:*)",
+      "Bash(gzip:*)",
+      "Bash(zcat:*)",
+      "Bash(date:*)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push origin HEAD)",
+      "Bash(git push origin HEAD:*)",
+      "Bash(gh:*)"
+    ],
+    "deny": [
+      "Bash(rm -rf /:*)",
+      "Bash(curl * | sh)",
+      "Bash(find /:*)",
+      "Bash(grep -r * /)",
+      "Bash(git push --tags:*)",
+      "Bash(git push --force:*)",
+      "Bash(npm publish:*)",
+      "Read(node_modules/**)",
+      "Read(.git/objects/**)",
+      "Write(.env*)",
+      "Read(.env*)"
+    ]
+  },
+  "hooks": {
+    "Start": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/session-start.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/large-file-guard.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/bash-safety.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/vault-schema-check.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/audit-log-append.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/vault-telemetry-append.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/vault-telemetry-append.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/agent-perf-tracker.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "command": "bash .claude/hooks/token-budget-reminder.sh"
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/session-summary.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": "🧰 Alet Çantası v4 | $(date +%H:%M) | $(git branch --show-current 2>/dev/null || echo 'no-git') | tokens: /token-status"
+}

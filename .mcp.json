@@ -1,0 +1,60 @@
+{
+  "$comment": "Alet Çantası MCP konfigürasyonu v2. FIX: filesystem scope daraltıldı.",
+  "mcpServers": {
+    "pal": {
+      "$comment": "BeehiveInnovations/pal-mcp-server — clink + planner + consensus + chat.",
+      "command": "npx",
+      "args": ["-y", "@beehiveinnovations/pal-mcp-server"],
+      "env": {
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+        "GEMINI_API_KEY": "${GEMINI_API_KEY}",
+        "OPENROUTER_API_KEY": "${OPENROUTER_API_KEY}",
+        "DISABLED_TOOLS": ""
+      }
+    },
+    "filesystem": {
+      "$comment": "FIX v2: Vault dosyalarına güvenli read erişimi. Kapsam DARALTILDI — tüm '.' yerine sadece vault dizini. .env dosyaları erişilemez.",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "./",
+        "--read-only"
+      ],
+      "$security_note": "Proje kökünü read-only olarak açar. Eğer yalnızca vault HTML'leri yeterliyse, '.' yerine belirli dosyaları listeleyin: './PromptVault.html ./ChainVault.html' gibi. .env dosyaları settings.json deny ile korunuyor."
+    },
+    "github": {
+      "$comment": "Repo, issue, PR yönetimi.",
+      "command": "docker",
+      "args": ["run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server"],
+      "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}" }
+    },
+    "playwright": {
+      "$comment": "E2E test ve render screenshot.",
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp"]
+    },
+    "fetch": {
+      "$comment": "Web içerik çekme — vault zenginleştirme için.",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+    },
+    "memory": {
+      "$comment": "Kalıcı agent memory — agent-memory-mesh skill'i tarafından kullanılır. [v2: agent koordinasyonu için]",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+    "sequential-thinking": {
+      "$comment": "Karmaşık akıl yürütme zincirleri için yapılandırılmış düşünme adımları.",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+    }
+  },
+  "_notes": {
+    "kurulum": "MCP server'ları aktif etmek için: claude mcp add --from-file .mcp.json",
+    "filesystem_security": "FIX v2: --read-only flag eklendi. Yine de .env okuma riski için settings.json deny listesini kontrol edin.",
+    "delegeAgent": "Codex'e iş paslamak için: /codex",
+    "delegeGemini": "Gemini'ye iş paslamak için: /gemini",
+    "memoryMesh": "Agent koordinasyonu için memory MCP + agent-memory-mesh skill kullanılır"
+  }
+}

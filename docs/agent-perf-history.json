@@ -1,0 +1,7 @@
+{
+  "_schema": "agent-perf-history v1 — agent-perf-tracker.sh tarafından beslenir",
+  "_format": "OpenTelemetry trace uyumlu (v4.1+)",
+  "_note": "Bu dosyayı manuel düzenlemeyin. agent-perf-tracker.sh append eder.",
+  "providers": {},
+  "sessions": []
+}
